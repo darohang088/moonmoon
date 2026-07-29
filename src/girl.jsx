@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, Star as StarIcon, Moon, Sparkles } from "lucide-react";
 
 const REASONS = [
-  "[Reason one — be specific, not generic.]",
-  "[Reason two — a habit or quirk you adore.]",
-  "[Reason three — how she makes you feel.]",
-  "[Reason four — something about your future together.]",
-  "[Reason five — anything you want, this is your sky.]",
+  "[Reason one — I love the way you care for people, even when you are tired yourself.]",
+  "[Reason two — I love your little habits and the small things you do without noticing.]",
+  "[Reason three — I love how being with you makes my heart feel calm and happy.]",
+  "[Reason four — I love imagining a future where we continue growing together.]",
+  "[Reason five — I love you for being you, because there is no one else like you.]",
 ];
 
 const LETTER_PARAGRAPHS = [
@@ -20,13 +20,19 @@ const LETTER_PARAGRAPHS = [
 ];
 
 const REMINDER_PARAGRAPHS = [
-  "អូនធ្លាប់តស៊ូយ៉ាងខ្លាំង ហើយត្រូវការតែមួយឆ្នាំប៉ុណ្ណោះ ដើម្បីក្លាយជាមនុស្សដែលអូននៅថ្ងៃនេះ។",
-  "គ្មាននរណាម្នាក់ឃើញរាល់យប់ដែលអូនមិនបានដេកស្រួល ឬពេលវេលាដែលអូនតស៊ូតែម្នាក់ឯងនោះឡើយ។ ប៉ុន្តែអូនធ្វើវាបានមែន។",
-  "ហើយពេលឃើញអ្នកដទៃជួបបញ្ហា ឬកំពុងតស៊ូ អូនតែងតែចង់ជួយ ចង់ឲ្យពួកគេបានល្អ ដូចអូនដែរ។ អូនផ្តល់កម្លាំងចិត្តឲ្យអ្នកដទៃគ្រប់ពេលវេលា។",
-  "ប៉ុន្តែហេតុអ្វីបានជាអូនមិនដែលមើលឃើញអ្វីដែលអូនបានធ្វើសម្រាប់ខ្លួនឯងទេ? អូនចេះថែទាំចិត្តអ្នកដទៃ តែអូនភ្លេចថែទាំចិត្តខ្លួនឯង។ អូនចង់ឲ្យគេមានមោទនភាព តែអូនផ្ទាល់មិនដែលមោទនភាពនឹងខ្លួនឯងសោះ។",
-  "អូនតែងតែគិតថាខ្លួនឯងនៅមិនទាន់គ្រប់គ្រាន់ ថ្វីត្បិតតែអូនបានធ្វើអ្វីៗច្រើនណាស់រួចមកហើយ។ អូនស្រោចទឹកឲ្យផ្កាគ្រប់ដើមជុំវិញខ្លួន ប៉ុន្តែភ្លេចស្រោចទឹកឲ្យផ្កាដើមរបស់អូនផ្ទាល់។",
-  "ថ្ងៃនេះ ខ្ញុំចង់ឲ្យអូនចាំថា៖ អូនមិនចាំបាច់ល្អឥតខ្ចោះ ដើម្បីមានតម្លៃនោះទេ។ គ្រាន់តែជាអូននេះឯង ក៏គ្រប់គ្រាន់ខ្លាំងណាស់ហើយ។",
-  "សូមអូនអោយចិត្តល្អចំពោះខ្លួនឯង ដូចអូនធ្លាប់ធ្វើចំពោះអ្នកដទៃ។ អូនស័ក្តិសមនឹងសេចក្តីស្រឡាញ់ និងមោទនភាពនោះដែរ ❤️",
+  "អូនធ្លាប់ឆ្លងកាត់រឿងជាច្រើន ហើយអូនបានតស៊ូយ៉ាងខ្លាំង។ ត្រឹមតែរយៈពេលមួយឆ្នាំប៉ុណ្ណោះ អូនបានក្លាយជាមនុស្សម្នាក់ដែលរឹងមាំជាងមុន ហើយបងមានមោទនភាពចំពោះអូនណាស់។",
+
+  "គ្មាននរណាម្នាក់បានឃើញរាល់យប់ដែលអូនគេងមិនស្រួល រាល់ពេលដែលអូនមានអារម្មណ៍នឿយហត់ ឬពេលដែលអូនត្រូវប្រឈមមុខនឹងអ្វីៗម្នាក់ឯងទេ។ ប៉ុន្តែអូននៅតែបន្តទៅមុខ ហើយអូនបានធ្វើវាបានយ៉ាងល្អ។",
+
+  "អ្វីដែលបងស្រឡាញ់ចំពោះអូន គឺអូនតែងតែគិតពីអ្នកដទៃមុនខ្លួនឯង។ ពេលឃើញនរណាម្នាក់កំពុងពិបាក អូនតែងតែចង់ជួយ ចង់ផ្តល់កម្លាំងចិត្ត និងចង់ឃើញពួកគេមានសុភមង្គល។ អូនតែងតែផ្តល់ភាពកក់ក្តៅឲ្យមនុស្សជុំវិញខ្លួន។",
+
+  "ប៉ុន្តែអូនដឹងទេ? ពេលខ្លះអូនភ្លេចមនុស្សម្នាក់ដែលក៏ត្រូវការការយកចិត្តទុកដាក់ដែរ… គឺអូនផ្ទាល់។ អូនចេះថែរក្សាចិត្តអ្នកដទៃ តែអូនភ្លេចថែរក្សាចិត្តខ្លួនឯង។ អូនចង់ឲ្យមនុស្សគ្រប់គ្នាមានមោទនភាពចំពោះអូន ប៉ុន្តែអូនមិនដែលឈប់មើលខ្លួនឯង ហើយនិយាយថា “អូនធ្វើបានល្អហើយ” ទេ។",
+
+  "អូនតែងគិតថាខ្លួនឯងនៅមិនទាន់ល្អគ្រប់គ្រាន់ ទោះបីអូនបានខិតខំ និងសម្រេចបានច្រើនណាស់ក៏ដោយ។ អូនដូចជាផ្កាមួយដែលតែងតែស្រោចទឹកឲ្យផ្កាផ្សេងៗជុំវិញខ្លួន ឲ្យពួកវារីកស្រស់ស្អាត ប៉ុន្តែពេលខ្លះអូនភ្លេចផ្តល់ទឹក និងការថែទាំឲ្យផ្កាដ៏សំខាន់មួយនេះ… គឺខ្លួនអូនឯង។",
+
+  "ថ្ងៃនេះ បងចង់ឲ្យអូនចាំថា៖ អូនមិនចាំបាច់ត្រូវល្អឥតខ្ចោះ ដើម្បីមានតម្លៃទេ។ អូនដែលជាអូននៅពេលនេះ គឺមានតម្លៃ និងគ្រប់គ្រាន់រួចហើយ។",
+
+  "សូមអូនចេះស្រឡាញ់ និងអាណិតខ្លួនឯងបន្តិច ដូចដែលអូនតែងតែធ្វើចំពោះអ្នកដទៃ។ អូនស័ក្តិសមនឹងទទួលបានសេចក្តីស្រឡាញ់ ការយកចិត្តទុកដាក់ និងមោទនភាពដូចគ្នា។ បងមានមោទនភាពចំពោះអូនណាស់ ❤️",
 ];
 
 const CONSTELLATION_POINTS = [
@@ -512,14 +518,14 @@ export default function GirlfriendDayPage() {
 
         .gd-string-wrap{position:relative; padding-top:2rem;}
         .gd-string-svg{position:absolute; top:0; left:0; width:100%; height:40px;}
-        .gd-polaroids{display:flex; justify-content:space-between; gap:0.8rem; padding-top:1.4rem;}
+        .gd-polaroids{display:grid; grid-template-columns:repeat(2, 1fr); gap:1.6rem 1.2rem; padding-top:1.8rem; max-width:420px; margin:0 auto;}
         .gd-polaroid{
-          background:#fff8ec; padding:0.5rem 0.5rem 1.1rem; border-radius:2px; width:23%;
+          background:#fff8ec; padding:0.5rem 0.5rem 1.1rem; border-radius:2px; width:100%;
           box-shadow:0 16px 28px -14px rgba(0,0,0,0.55); position:relative;
           transition:transform .4s ease, box-shadow .4s ease;
         }
-        .gd-polaroid:nth-child(odd){transform:rotate(-4deg) translateY(6px);}
-        .gd-polaroid:nth-child(even){transform:rotate(3deg) translateY(-4px);}
+        .gd-polaroid:nth-child(odd){transform:rotate(-4deg);}
+        .gd-polaroid:nth-child(even){transform:rotate(3deg) translateY(14px);}
         .gd-polaroid:hover{transform:scale(1.08) rotate(0deg) translateY(-6px); box-shadow:0 0 30px rgba(232,200,116,0.4);}
         .gd-polaroid::before{content:""; position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 6px rgba(232,200,116,0.8);}
         .gd-polaroid-photo{aspect-ratio:1/1; background:linear-gradient(160deg,#f3d98a33,#ff9db333); display:flex; align-items:center; justify-content:center;}
@@ -715,7 +721,7 @@ export default function GirlfriendDayPage() {
       {/* PHOTOS ON A STRING */}
       <section className="gd-section">
         <Reveal className="gd-center-head">
-          <div className="gd-eyebrow">Our Moments</div>
+          <div className="gd-eyebrow">look at how far you come</div>
           <h2>Pinned Among the Stars</h2>
         </Reveal>
         <Reveal className="gd-string-wrap" delay={100}>
@@ -731,7 +737,7 @@ export default function GirlfriendDayPage() {
               strokeWidth="1"
             />
           </svg>
-          {["p1.png", "p2.jpg", "p3.jpg", "p4.jpeg"].map((file, idx) => (
+          {["p1.png", "p3.jpg", "p2.jpg", "p4.jpeg"].map((file, idx) => (
             <div className="gd-polaroid" key={idx}>
               <div className="gd-polaroid-photo">
                 <img
@@ -743,10 +749,6 @@ export default function GirlfriendDayPage() {
             </div>
           ))}
         </Reveal>
-        <div className="gd-edit-note">
-          ✎ replace each gd-polaroid-photo div with an &lt;img src="..." /&gt;
-          when ready
-        </div>
       </section>
 
       {/* FOOTER */}
