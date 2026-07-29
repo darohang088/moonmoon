@@ -731,16 +731,17 @@ export default function GirlfriendDayPage() {
               strokeWidth="1"
             />
           </svg>
-          <div className="gd-polaroids">
-            {[Heart, StarIcon, Moon, Sparkles].map((Icon, idx) => (
-              <div className="gd-polaroid" key={idx}>
-                <div className="gd-polaroid-photo">
-                  <Icon size={20} color="#b8863f" strokeWidth={1.3} />
-                </div>
-                <div className="gd-polaroid-cap">photo {idx + 1}</div>
+          {["p1.png", "p2.jpg", "p3.jpg", "p4.jpeg"].map((file, idx) => (
+            <div className="gd-polaroid" key={idx}>
+              <div className="gd-polaroid-photo">
+                <img
+                  src={`${import.meta.env.BASE_URL}photos/${file}`}
+                  alt=""
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </Reveal>
         <div className="gd-edit-note">
           ✎ replace each gd-polaroid-photo div with an &lt;img src="..." /&gt;
