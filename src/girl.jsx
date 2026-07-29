@@ -44,8 +44,14 @@ function useRevealOnScroll() {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) { setInView(true); io.unobserve(e.target); } }),
-      { threshold: 0.2 }
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setInView(true);
+            io.unobserve(e.target);
+          }
+        }),
+      { threshold: 0.2 },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -61,7 +67,13 @@ function useCountdown() {
     return t;
   }, []);
   const WINDOW_MS = 14 * 24 * 60 * 60 * 1000; // symbolic 14-day "moon grows fuller" window
-  const [state, setState] = useState({ d: "00", h: "00", m: "00", s: "00", percent: 0 });
+  const [state, setState] = useState({
+    d: "00",
+    h: "00",
+    m: "00",
+    s: "00",
+    percent: 0,
+  });
   useEffect(() => {
     const pad = (n) => String(n).padStart(2, "0");
     const tick = () => {
@@ -89,7 +101,8 @@ function useParallaxY(factor) {
     const onScroll = () => {
       if (raf) return;
       raf = requestAnimationFrame(() => {
-        if (ref.current) ref.current.style.transform = `translateY(${window.scrollY * factor}px)`;
+        if (ref.current)
+          ref.current.style.transform = `translateY(${window.scrollY * factor}px)`;
         raf = null;
       });
     };
@@ -117,12 +130,34 @@ function Starfield({ count = 70 }) {
     <div className="gd-starfield" aria-hidden="true">
       <div ref={farRef} className="gd-star-layer">
         {far.map((s) => (
-          <span key={s.id} className="gd-star-dot" style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size, height: s.size, animationDelay: `${s.delay}s`, animationDuration: `${s.duration}s` }} />
+          <span
+            key={s.id}
+            className="gd-star-dot"
+            style={{
+              top: `${s.top}%`,
+              left: `${s.left}%`,
+              width: s.size,
+              height: s.size,
+              animationDelay: `${s.delay}s`,
+              animationDuration: `${s.duration}s`,
+            }}
+          />
         ))}
       </div>
       <div ref={nearRef} className="gd-star-layer">
         {near.map((s) => (
-          <span key={s.id} className="gd-star-dot gd-star-near" style={{ top: `${s.top}%`, left: `${s.left}%`, width: s.size * 1.6, height: s.size * 1.6, animationDelay: `${s.delay}s`, animationDuration: `${s.duration}s` }} />
+          <span
+            key={s.id}
+            className="gd-star-dot gd-star-near"
+            style={{
+              top: `${s.top}%`,
+              left: `${s.left}%`,
+              width: s.size * 1.6,
+              height: s.size * 1.6,
+              animationDelay: `${s.delay}s`,
+              animationDuration: `${s.duration}s`,
+            }}
+          />
         ))}
       </div>
     </div>
@@ -131,27 +166,44 @@ function Starfield({ count = 70 }) {
 
 function ShootingStar({ trigger }) {
   const [key, setKey] = useState(0);
-  useEffect(() => { if (trigger) setKey((k) => k + 1); }, [trigger]);
+  useEffect(() => {
+    if (trigger) setKey((k) => k + 1);
+  }, [trigger]);
   if (!trigger) return null;
   return <span key={key} className="gd-shooting-star" aria-hidden="true" />;
 }
 
 function MoonPhase({ percent }) {
   const R = 46;
-  const cx = 60, cy = 60;
+  const cx = 60,
+    cy = 60;
   const shadowOffset = percent * (2 * R + 6);
   return (
     <div className="gd-moon-wrap">
-      <svg viewBox="0 0 120 120" width="120" height="120" className="gd-moon-svg">
+      <svg
+        viewBox="0 0 120 120"
+        width="120"
+        height="120"
+        className="gd-moon-svg"
+      >
         <defs>
           <radialGradient id="moonGlow" cx="35%" cy="30%" r="75%">
             <stop offset="0%" stopColor="#fff8e6" />
             <stop offset="55%" stopColor="#f3d98a" />
             <stop offset="100%" stopColor="#d9b25c" />
           </radialGradient>
-          <filter id="moonBlur"><feGaussianBlur stdDeviation="6" /></filter>
+          <filter id="moonBlur">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
         </defs>
-        <circle cx={cx} cy={cy} r={R + 14} fill="url(#moonGlow)" opacity="0.18" filter="url(#moonBlur)" />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={R + 14}
+          fill="url(#moonGlow)"
+          opacity="0.18"
+          filter="url(#moonBlur)"
+        />
         <circle cx={cx} cy={cy} r={R} fill="url(#moonGlow)" />
         <circle cx={cx + shadowOffset} cy={cy} r={R + 0.5} fill="#101733" />
       </svg>
@@ -162,7 +214,11 @@ function MoonPhase({ percent }) {
 function Reveal({ as: Tag = "div", className = "", delay = 0, children }) {
   const [ref, inView] = useRevealOnScroll();
   return (
-    <Tag ref={ref} className={`gd-reveal ${inView ? "gd-in" : ""} ${className}`} style={{ transitionDelay: inView ? `${delay}ms` : "0ms" }}>
+    <Tag
+      ref={ref}
+      className={`gd-reveal ${inView ? "gd-in" : ""} ${className}`}
+      style={{ transitionDelay: inView ? `${delay}ms` : "0ms" }}
+    >
       {children}
     </Tag>
   );
@@ -173,8 +229,14 @@ function FlowerGrowth({ variant = "sun" }) {
   const isStorm = variant === "storm";
   const petalColor = isStorm ? "#ff9db3" : "#f3d98a";
   const rainDrops = useMemo(
-    () => Array.from({ length: 10 }).map((_, i) => ({ id: i, x: 10 + Math.random() * 100, delay: Math.random() * 2, dur: 1 + Math.random() * 0.8 })),
-    []
+    () =>
+      Array.from({ length: 10 }).map((_, i) => ({
+        id: i,
+        x: 10 + Math.random() * 100,
+        delay: Math.random() * 2,
+        dur: 1 + Math.random() * 0.8,
+      })),
+    [],
   );
   return (
     <div ref={ref} className={`gd-flower-wrap ${inView ? "gd-in" : ""}`}>
@@ -182,33 +244,90 @@ function FlowerGrowth({ variant = "sun" }) {
         {isStorm ? (
           <g className="gd-weather" opacity="0.55">
             {rainDrops.map((d) => (
-              <line key={d.id} x1={d.x} y1="-10" x2={d.x - 6} y2="14" stroke="#8fa8e8" strokeWidth="1.4"
-                className="gd-rain-drop" style={{ animationDelay: `${d.delay}s`, animationDuration: `${d.dur}s` }} />
+              <line
+                key={d.id}
+                x1={d.x}
+                y1="-10"
+                x2={d.x - 6}
+                y2="14"
+                stroke="#8fa8e8"
+                strokeWidth="1.4"
+                className="gd-rain-drop"
+                style={{
+                  animationDelay: `${d.delay}s`,
+                  animationDuration: `${d.dur}s`,
+                }}
+              />
             ))}
           </g>
         ) : (
           <g className="gd-weather" opacity="0.7">
-            <circle cx="94" cy="22" r="14" fill="#f3d98a" opacity="0.5" className="gd-sun-glow" />
+            <circle
+              cx="94"
+              cy="22"
+              r="14"
+              fill="#f3d98a"
+              opacity="0.5"
+              className="gd-sun-glow"
+            />
             {[0, 45, 90, 135, 180, 225].map((a) => (
-              <line key={a} x1="94" y1="22" x2={94 + Math.cos((a * Math.PI) / 180) * 26} y2={22 + Math.sin((a * Math.PI) / 180) * 26}
-                stroke="#f3d98a" strokeWidth="1.3" className="gd-sun-ray" />
+              <line
+                key={a}
+                x1="94"
+                y1="22"
+                x2={94 + Math.cos((a * Math.PI) / 180) * 26}
+                y2={22 + Math.sin((a * Math.PI) / 180) * 26}
+                stroke="#f3d98a"
+                strokeWidth="1.3"
+                className="gd-sun-ray"
+              />
             ))}
           </g>
         )}
-        <path d="M60,178 C60,178 58,120 60,90" fill="none" stroke="#7fae6b" strokeWidth="3" strokeLinecap="round" className={`gd-stem ${inView ? "gd-grown" : ""}`} />
-        <path d="M60,140 C48,136 40,124 42,116 C54,116 60,128 60,140 Z" fill="#6fa25c" className={`gd-leaf gd-leaf-l ${inView ? "gd-shown" : ""}`} />
-        <path d="M60,120 C72,116 80,104 78,96 C66,96 60,108 60,120 Z" fill="#7fae6b" className={`gd-leaf gd-leaf-r ${inView ? "gd-shown" : ""}`} />
-        <g className={`gd-bloom ${inView ? "gd-bloomed" : ""}`} style={{ transformOrigin: "60px 82px" }}>
+        <path
+          d="M60,178 C60,178 58,120 60,90"
+          fill="none"
+          stroke="#7fae6b"
+          strokeWidth="3"
+          strokeLinecap="round"
+          className={`gd-stem ${inView ? "gd-grown" : ""}`}
+        />
+        <path
+          d="M60,140 C48,136 40,124 42,116 C54,116 60,128 60,140 Z"
+          fill="#6fa25c"
+          className={`gd-leaf gd-leaf-l ${inView ? "gd-shown" : ""}`}
+        />
+        <path
+          d="M60,120 C72,116 80,104 78,96 C66,96 60,108 60,120 Z"
+          fill="#7fae6b"
+          className={`gd-leaf gd-leaf-r ${inView ? "gd-shown" : ""}`}
+        />
+        <g
+          className={`gd-bloom ${inView ? "gd-bloomed" : ""}`}
+          style={{ transformOrigin: "60px 82px" }}
+        >
           {[0, 60, 120, 180, 240, 300].map((a, i) => (
-            <ellipse key={a} cx={60 + Math.cos((a * Math.PI) / 180) * 14} cy={82 + Math.sin((a * Math.PI) / 180) * 14}
-              rx="10" ry="7" fill={petalColor} opacity="0.92"
+            <ellipse
+              key={a}
+              cx={60 + Math.cos((a * Math.PI) / 180) * 14}
+              cy={82 + Math.sin((a * Math.PI) / 180) * 14}
+              rx="10"
+              ry="7"
+              fill={petalColor}
+              opacity="0.92"
               transform={`rotate(${a} ${60 + Math.cos((a * Math.PI) / 180) * 14} ${82 + Math.sin((a * Math.PI) / 180) * 14})`}
-              className="gd-petal" style={{ transitionDelay: `${0.5 + i * 0.08}s` }} />
+              className="gd-petal"
+              style={{ transitionDelay: `${0.5 + i * 0.08}s` }}
+            />
           ))}
           <circle cx="60" cy="82" r="7" fill="#b8863f" />
         </g>
       </svg>
-      <div className="gd-flower-cap">{isStorm ? "the one she forgets to water" : "every flower she waters for others"}</div>
+      <div className="gd-flower-cap">
+        {isStorm
+          ? "the one she forgets to water"
+          : "every flower she waters for others"}
+      </div>
     </div>
   );
 }
@@ -216,16 +335,39 @@ function FlowerGrowth({ variant = "sun" }) {
 function Constellation() {
   const [active, setActive] = useState(null);
   const [ref, inView] = useRevealOnScroll();
-  const pathD = CONSTELLATION_POINTS.map((p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`).join(" ") + " Z";
+  const pathD =
+    CONSTELLATION_POINTS.map(
+      (p, i) => `${i === 0 ? "M" : "L"}${p.x},${p.y}`,
+    ).join(" ") + " Z";
   return (
     <div ref={ref} className="gd-constellation-wrap">
       <svg viewBox="0 0 320 260" className="gd-constellation-svg">
-        <path d={pathD} className={`gd-const-line ${inView ? "gd-drawn" : ""}`} />
+        <path
+          d={pathD}
+          className={`gd-const-line ${inView ? "gd-drawn" : ""}`}
+        />
         {CONSTELLATION_POINTS.map((p, i) => (
-          <g key={i} className="gd-const-star" onClick={() => setActive(i)} style={{ cursor: "pointer" }}>
-            <circle cx={p.x} cy={p.y} r={active === i ? 12 : 8} className={`gd-const-glow ${active === i ? "gd-const-active" : ""}`} />
+          <g
+            key={i}
+            className="gd-const-star"
+            onClick={() => setActive(i)}
+            style={{ cursor: "pointer" }}
+          >
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r={active === i ? 12 : 8}
+              className={`gd-const-glow ${active === i ? "gd-const-active" : ""}`}
+            />
             <circle cx={p.x} cy={p.y} r="4" fill="#fff8e6" />
-            <text x={p.x} y={p.y - 16} textAnchor="middle" className="gd-const-num">{i + 1}</text>
+            <text
+              x={p.x}
+              y={p.y - 16}
+              textAnchor="middle"
+              className="gd-const-num"
+            >
+              {i + 1}
+            </text>
           </g>
         ))}
       </svg>
@@ -233,7 +375,9 @@ function Constellation() {
         {active === null ? (
           <span className="gd-const-hint">✦ tap a star to reveal a reason</span>
         ) : (
-          <span className="gd-const-reason"><strong>{active + 1}.</strong> {REASONS[active]}</span>
+          <span className="gd-const-reason">
+            <strong>{active + 1}.</strong> {REASONS[active]}
+          </span>
         )}
       </div>
     </div>
@@ -431,25 +575,46 @@ export default function GirlfriendDayPage() {
 
       {/* HERO */}
       <section className="gd-hero">
-        <div className="gd-eyebrow gd-fade" style={{ animationDelay: "0.2s" }}>Written in the Stars</div>
+        <div className="gd-eyebrow gd-fade" style={{ animationDelay: "0.2s" }}>
+          Written in the Stars
+        </div>
         <h1 className="gd-h1 gd-fade" style={{ animationDelay: "0.4s" }}>
           Happy Girlfriend Day
           <span className="gd-script">Moon Moon</span>
         </h1>
         <p className="gd-sub gd-fade" style={{ animationDelay: "0.55s" }}>
-          Every night the moon grows a little fuller — just like my reasons for loving you.
+          Every night the moon grows a little fuller — just like my reasons for
+          loving you.
         </p>
 
         <div className="gd-fade" style={{ animationDelay: "0.7s" }}>
           <MoonPhase percent={cd.percent} />
         </div>
-        <div className="gd-moon-caption gd-fade" style={{ animationDelay: "0.8s" }}>
+        <div
+          className="gd-moon-caption gd-fade"
+          style={{ animationDelay: "0.8s" }}
+        >
           the moon reaches full on Girlfriend Day, August 1st
         </div>
 
-        <div className="gd-countdown gd-fade" style={{ animationDelay: "0.9s" }}>
-          {[["d", "Days"], ["h", "Hrs"], ["m", "Min"], ["s", "Sec"]].map(([k, label]) => (
-            <div key={k} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div
+          className="gd-countdown gd-fade"
+          style={{ animationDelay: "0.9s" }}
+        >
+          {[
+            ["d", "Days"],
+            ["h", "Hrs"],
+            ["m", "Min"],
+            ["s", "Sec"],
+          ].map(([k, label]) => (
+            <div
+              key={k}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <div className="gd-cd-num">{cd[k]}</div>
               <div className="gd-cd-label">{label}</div>
             </div>
@@ -457,31 +622,63 @@ export default function GirlfriendDayPage() {
         </div>
 
         <div className="gd-fade" style={{ animationDelay: "1.05s" }}>
-          <div className="gd-wish-btn" onClick={makeWish} role="button" tabIndex={0}
+          <div
+            className="gd-wish-btn"
+            onClick={makeWish}
+            role="button"
+            tabIndex={0}
             aria-label="Make a wish to reveal your letter"
-            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && makeWish()}>
-            <StarIcon size={30} color="#f3d98a" fill={open ? "#f3d98a" : "none"} strokeWidth={1.3} />
-            {ripple > 0 && <span key={ripple} className="gd-ripple" aria-hidden="true" />}
+            onKeyDown={(e) =>
+              (e.key === "Enter" || e.key === " ") && makeWish()
+            }
+          >
+            <StarIcon
+              size={30}
+              color="#f3d98a"
+              fill={open ? "#f3d98a" : "none"}
+              strokeWidth={1.3}
+            />
+            {ripple > 0 && (
+              <span key={ripple} className="gd-ripple" aria-hidden="true" />
+            )}
           </div>
-          <div className={`gd-wish-hint ${open ? "gd-hide" : ""}`}>make a wish</div>
+          <div className={`gd-wish-hint ${open ? "gd-hide" : ""}`}>
+            make a wish
+          </div>
         </div>
       </section>
 
       {/* LETTER */}
       <section className="gd-section">
-        {!open && <div className="gd-hint-open">Make a wish above to catch a falling star ✦</div>}
+        {!open && (
+          <div className="gd-hint-open">
+            Make a wish above to catch a falling star ✦
+          </div>
+        )}
         <div className={`gd-letter-outer ${open ? "gd-shown" : ""}`}>
           <div className="gd-letter">
             <div className="gd-letter-inner">
-              <div className="gd-letter-to">To My <span className="gd-script">Moon Moon</span> 🤍</div>
+              <div className="gd-letter-to">
+                To My <span className="gd-script">Moon Moon</span> 🤍
+              </div>
               {LETTER_PARAGRAPHS.map((p, i) => (
-                <p key={i} style={{ transitionDelay: open ? `${0.35 + i * 0.2}s` : "0s" }}>{p}</p>
+                <p
+                  key={i}
+                  style={{
+                    transitionDelay: open ? `${0.35 + i * 0.2}s` : "0s",
+                  }}
+                >
+                  {p}
+                </p>
               ))}
               <div className="gd-sign">— Dororo</div>
             </div>
           </div>
         </div>
-        <div className="gd-edit-note">✎ edit LETTER_PARAGRAPHS at the top of this file to add your own memories</div>
+        <div className="gd-edit-note">
+          ✎ edit LETTER_PARAGRAPHS at the top of this file to add your own
+          memories
+        </div>
       </section>
 
       {/* REMINDER — TWO FLOWERS */}
@@ -522,24 +719,43 @@ export default function GirlfriendDayPage() {
           <h2>Pinned Among the Stars</h2>
         </Reveal>
         <Reveal className="gd-string-wrap" delay={100}>
-          <svg className="gd-string-svg" viewBox="0 0 400 40" preserveAspectRatio="none">
-            <path d="M0,10 Q100,40 200,12 T400,10" fill="none" stroke="rgba(232,200,116,0.35)" strokeWidth="1" />
+          <svg
+            className="gd-string-svg"
+            viewBox="0 0 400 40"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,10 Q100,40 200,12 T400,10"
+              fill="none"
+              stroke="rgba(232,200,116,0.35)"
+              strokeWidth="1"
+            />
           </svg>
           <div className="gd-polaroids">
             {[Heart, StarIcon, Moon, Sparkles].map((Icon, idx) => (
               <div className="gd-polaroid" key={idx}>
-                <div className="gd-polaroid-photo"><Icon size={20} color="#b8863f" strokeWidth={1.3} /></div>
+                <div className="gd-polaroid-photo">
+                  <Icon size={20} color="#b8863f" strokeWidth={1.3} />
+                </div>
                 <div className="gd-polaroid-cap">photo {idx + 1}</div>
               </div>
             ))}
           </div>
         </Reveal>
-        <div className="gd-edit-note">✎ replace each gd-polaroid-photo div with an &lt;img src="..." /&gt; when ready</div>
+        <div className="gd-edit-note">
+          ✎ replace each gd-polaroid-photo div with an &lt;img src="..." /&gt;
+          when ready
+        </div>
       </section>
 
       {/* FOOTER */}
       <footer className="gd-footer">
-        <Heart className="gd-footer-heart" size={20} fill="currentColor" strokeWidth={0} />
+        <Heart
+          className="gd-footer-heart"
+          size={20}
+          fill="currentColor"
+          strokeWidth={0}
+        />
         <p>Under the same sky, forever yours</p>
         <div className="gd-date">Girlfriend Day · August 1</div>
       </footer>
